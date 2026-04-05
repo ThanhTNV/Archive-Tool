@@ -1,5 +1,8 @@
 # Archive Tool
 
+[![CI](https://github.com/ThanhTNV/archive-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/ThanhTNV/archive-tool/actions/workflows/ci.yml)
+[![Release](https://github.com/ThanhTNV/archive-tool/actions/workflows/release.yml/badge.svg)](https://github.com/ThanhTNV/archive-tool/actions/workflows/release.yml)
+
 A powerful command-line utility written in Go to archive all files in the current directory to a `.zip` file with CLI confirmation, progress tracking, and optional cleanup.
 
 ## Features
@@ -20,14 +23,31 @@ A powerful command-line utility written in Go to archive all files in the curren
 
 ## Installation
 
-### Prerequisites
-- Go 1.26 or later
+### Download Pre-built Binaries
 
-### Build
+Download the latest release for your platform from the [Releases page](https://github.com/ThanhTNV/archive-tool/releases).
+
+Available binaries:
+- `archive-windows-amd64.exe` - Windows (64-bit)
+- `archive-windows-arm64.exe` - Windows (ARM)
+- `archive-linux-amd64` - Linux (64-bit)
+- `archive-linux-arm64` - Linux (ARM)
+- `archive-darwin-amd64` - macOS (Intel)
+- `archive-darwin-arm64` - macOS (Apple Silicon)
+
+Rename the downloaded binary to `archive` (or `archive.exe` on Windows) and add it to your PATH.
+
+### Build from Source
+
+**Prerequisites:** Go 1.26 or later
 
 ```powershell
-# Navigate to the project directory
-cd d:\GoGoGo\archive-tool
+# Clone the repository
+git clone https://github.com/ThanhTNV/archive-tool.git
+cd archive-tool
+
+# Run tests
+go test ./...
 
 # Build the executable
 go build -o archive.exe
@@ -284,6 +304,28 @@ Current directory: C:\EmptyFolder
 - Excluded files and directories will NOT be deleted even with `--delete` flag
 - The tool respects the same exclusion patterns during both archiving and deletion
 - Only operates on the current working directory (not recursive from parent directories)
+
+## Development
+
+### Running Tests
+
+```bash
+go test -v ./...
+```
+
+### Creating a New Release
+
+Push a version tag to trigger the release pipeline:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The CI/CD pipeline will:
+1. Run all tests
+2. Build binaries for Windows, Linux, and macOS (amd64 + arm64)
+3. Create a GitHub Release with all binaries and SHA-256 checksums
 
 ## License
 

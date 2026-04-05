@@ -306,7 +306,8 @@ func createArchive(sourceDir, outputFile string, excludePatterns []string, archi
 
 	fmt.Printf("Found %d files to archive\n\n", totalFiles)
 
-	zipFile, err := os.Create(outputFile)
+	outputPath := filepath.Join(sourceDir, outputFile)
+	zipFile, err := os.Create(outputPath)
 	if err != nil {
 		return err
 	}
