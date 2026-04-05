@@ -10,6 +10,11 @@ jobs:
   test:
     name: Test
     runs-on: ${{ matrix.os }}
+    # PowerShell splits -coverprofile=coverage.txt at '=' and treats '.txt' as a package,
+    # which fails the job even when tests pass. Bash parses the flag correctly.
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
