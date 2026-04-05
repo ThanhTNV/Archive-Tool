@@ -3,8 +3,10 @@ archive.exe
 archive
 *.exe
 
-# Test output
+# Test output / coverage (local only; do not commit)
+coverage
 coverage.txt
+coverage.out
 *.zip
 
 # IDE
