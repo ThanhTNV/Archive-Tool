@@ -4,7 +4,7 @@ A powerful command-line utility written in Go to archive all files in the curren
 
 ## Features
 
-- ✅ Archives entire directory structure to ZIP format
+- ✅ Recursively archives entire directory structure to ZIP format
 - ✅ Interactive CLI confirmation before archiving
 - ✅ **Real-time progress bars** for archiving and deletion
 - ✅ Auto-generates timestamped archive names
@@ -12,6 +12,7 @@ A powerful command-line utility written in Go to archive all files in the curren
 - ✅ Support for excluding file/folder patterns (`-e`, `--exclude`)
 - ✅ **Dual compression modes**: Fast (default) or Best compression
 - ✅ **Optional file deletion after archiving** to free up space (`-d`, `--delete`)
+- ✅ **Automatic empty directory cleanup** after deletion
 - ✅ **Empty directory detection** - prevents archiving empty folders
 - ✅ Comprehensive help documentation (`-h`, `--help`)
 - ✅ Cross-platform (Windows, macOS, Linux)
@@ -45,7 +46,7 @@ go build -o archive.exe
 archive.exe
 ```
 
-This will create an archive named `archive_YYYYMMDD_HHMMSS.zip` in the current directory with all files.
+This will create an archive named `archive_YYYYMMDD_HHMMSS.zip` in the current directory with all files and subdirectories.
 
 ### Custom Output Filename
 
@@ -70,7 +71,7 @@ archive.exe -d
 archive.exe --delete
 ```
 
-This will delete original files after successful archiving to free up space. You'll be asked for confirmation before deletion.
+This will delete original files and clean up empty subdirectories after successful archiving to free up space. You'll be asked for confirmation before deletion.
 
 ### Compression Modes
 
@@ -100,7 +101,7 @@ archive.exe --output backup.zip -d
 # Archive with best compression (smaller file, slower)
 archive.exe -c best -o backup.zip
 
-# Archive with all options
+# Archive with all options combined
 archive.exe --output final_backup.zip --exclude ".git,.env" --compress best --delete
 ```
 
@@ -114,11 +115,11 @@ archive.exe --help
 ## How It Works
 
 1. **Validates Directory** - Checks if the directory has files to archive
-2. **Displays Summary** - Shows the current directory, output filename, and options
+2. **Displays Summary** - Shows the current directory, output filename, compression level, and options
 3. **Requests Confirmation** - Asks user to confirm before proceeding
-4. **Scans Directory** - Counts total files to display accurate progress
-5. **Creates Archive** - Archives files with real-time progress bar
-6. **Optional Cleanup** - If delete flag is set, asks for confirmation then deletes original files with progress bar
+4. **Scans Directory** - Recursively counts all files to display accurate progress
+5. **Creates Archive** - Archives all files and subdirectories with real-time progress bar
+6. **Optional Cleanup** - If delete flag is set, asks for confirmation then deletes original files and cleans up empty subdirectories
 7. **Reports Results** - Shows final statistics and success message
 
 ## Command-Line Flags
@@ -129,7 +130,7 @@ archive.exe --help
 | `-o`, `--output` | Output zip filename | `archive_YYYYMMDD_HHMMSS.zip` |
 | `-e`, `--exclude` | Comma-separated exclusion patterns | (none) |
 | `-c`, `--compress` | Compression level: `fast` or `best` | `fast` |
-| `-d`, `--delete` | Delete original files after archiving | (disabled) |
+| `-d`, `--delete` | Delete original files and empty dirs | (disabled) |
 
 ## Progress Bars
 
@@ -137,6 +138,9 @@ The tool displays real-time progress bars for both archiving and deletion:
 
 ```
 Archiving files:
+[=============================>          ] 10/15 (67%)
+
+Deleting files:
 [=============================>          ] 10/15 (67%)
 ```
 
@@ -219,7 +223,7 @@ Archiving files:
 ✓ Archive created successfully: project_backup.zip
 ```
 
-### With Delete
+### With Delete (Full Cleanup)
 
 ```cmd
 C:\MyProject> archive.exe -o backup.zip -d
@@ -265,19 +269,21 @@ Current directory: C:\EmptyFolder
 ## Safety Features
 
 - ✅ Two-level confirmation (archive + delete separately)
-- ✅ Excluded files are NOT deleted even with `--delete` flag
+- ✅ Excluded files and directories are NOT deleted even with `--delete` flag
 - ✅ Archive file itself is NOT included in the archive
 - ✅ Empty directory detection prevents unnecessary operations
+- ✅ Automatic empty directory cleanup after file deletion
 - ✅ Warning messages for destructive operations
 - ✅ Graceful error handling with informative messages
 
 ## Notes
 
-- Recursively archives all files and subdirectories
-- Directory structure is fully preserved in the ZIP file
-- With `--delete`, empty subdirectories are automatically cleaned up after file deletion
+- Recursively archives all files and subdirectories (uses `filepath.Walk`)
+- Complete directory structure is fully preserved in the ZIP file
+- With `--delete`, files are deleted first, then empty subdirectories are cleaned up (bottom-up)
 - Excluded files and directories will NOT be deleted even with `--delete` flag
 - The tool respects the same exclusion patterns during both archiving and deletion
+- Only operates on the current working directory (not recursive from parent directories)
 
 ## License
 
